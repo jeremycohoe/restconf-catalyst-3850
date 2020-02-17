@@ -1,0 +1,16 @@
+API Call:
+https://10.85.134.119/restconf/data/Cisco-IOS-XE-interfaces-oper:interfaces/interface?fields=name;speed;phys-address;admin-status;statistics/in-octets;statistics/out-octets
+
+Sample output:
+{
+      "name": "GigabitEthernet0/0",
+      "admin-status": "if-state-up",
+      "phys-address": "34:6f:90:f5:88:80",
+      "speed": "1024000000",
+      "statistics": {
+        "in-octets": "1279097",
+        "out-octets": 13287299
+      }
+    },
+    
+   
