@@ -29,11 +29,10 @@ RESTCONF API calls for use cases:
 	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F14/
 3. Configure interface information for a single interface
 	description, port vlan(s), access/trunk mode, port channel membership, link status, throughput, speed settings (actual and configured), link status (actual and configured)
-	
 4. Read all arp entries
 	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-arp-oper:arp-data
-5. Read mac addresses for a specific interface
-	?
+5. Read mac addresses for a specific interface (Read MAC Address Table)
+	https://10.85.134.65/restconf/data/Cisco-IOS-XE-matm-oper:matm-oper-data
 6. Read entire configuration (same as show running-config)
 	GET @ https://10.85.134.119:443/restconf/data/Cisco-IOS-XE-native:native
 7. Change interface vlan or voice vlan
