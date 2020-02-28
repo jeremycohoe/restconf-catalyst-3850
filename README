@@ -43,6 +43,13 @@ RESTCONF API calls for use cases:
   "Cisco-IOS-XE-native:GigabitEthernet": [
     {
       "name": "1/0/1",
+      "description": "new-desc" } ] }
+
+
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
       "description": "AP1-new-desc",
       "switchport": {
             "Cisco-IOS-XE-switch:access": {
