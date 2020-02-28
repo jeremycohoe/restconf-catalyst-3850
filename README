@@ -2,11 +2,25 @@ Cisco Catalyst 3850 Switch
 IOS XE 16.9.4
 RESTCONF enabled
 
+Use Cases:
+1. Read all vlans on device
+2. Read all interfaces information or for a single interface at a time 
+3. Configure interface information for a single interface
+	description, port vlan(s), access/trunk mode, port channel membership, link status, throughput, speed settings (actual and configured), link status (actual and configured)
+4. Read all arp entries
+5. Read mac addresses for a specific interface
+6. Read entire configuration (same as show running-config)
+7. Change interface vlan or voice vlan
+8. Add vlan to trunk on interface
+9. Change interface description
+10. Change interface speed/duplex
+11. Change interface settings for: mac-address ACL, arp inspection, dhcp source verify
 
-API Call:
+
+Example API Call:
 https://10.85.134.119/restconf/data/Cisco-IOS-XE-interfaces-oper:interfaces/interface?fields=name;speed;phys-address;admin-status;statistics/in-octets;statistics/out-octets
 
-Sample output:
+Example output:
 {
       "name": "GigabitEthernet0/0",
       "admin-status": "if-state-up",
@@ -16,6 +30,4 @@ Sample output:
         "in-octets": "1279097",
         "out-octets": 13287299
       }
-    },
-    
-   
+    }
