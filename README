@@ -15,6 +15,271 @@ Use Cases:
 9. Change interface description
 10. Change interface speed/duplex
 11. Change interface settings for: mac-address ACL, arp inspection, dhcp source verify
+12. Save configuration
+
+
+
+
+
+RESTCONF API calls for use cases:
+1. Read all vlans on device
+	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-vlan-oper:vlans/vlan
+2. Read all interfaces information or for a single interface at a time 
+	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-interfaces-oper:interfaces/interface=GigabitEthernet1%2F0%2F14/
+	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F14/
+3. Configure interface information for a single interface
+	description, port vlan(s), access/trunk mode, port channel membership, link status, throughput, speed settings (actual and configured), link status (actual and configured)
+	
+4. Read all arp entries
+	GET @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-arp-oper:arp-data
+5. Read mac addresses for a specific interface
+	?
+6. Read entire configuration (same as show running-config)
+	GET @ https://10.85.134.119:443/restconf/data/Cisco-IOS-XE-native:native
+7. Change interface vlan or voice vlan
+	PATCH @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet
+
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
+      "description": "AP1-new-desc",
+      "switchport": {
+            "Cisco-IOS-XE-switch:access": {
+              "vlan": {
+                "vlan": 22
+              }
+            }
+    } } ] }
+
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
+      "description": "AP1-new-desc",
+      "switchport": {
+            "Cisco-IOS-XE-switch:access": {
+              "vlan": {
+                "vlan": 23
+              }
+            }
+    } } ] }
+
+8. Add vlan to trunk on interface
+	PATCH @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet
+
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/14",
+      "description": "AP2",
+      "switchport": {
+        "Cisco-IOS-XE-switch:mode": {
+          "trunk": {}
+        },
+        "Cisco-IOS-XE-switch:trunk": {
+          "allowed": {
+            "vlan": {
+              "vlans": "20,30,40"
+            }
+          },
+          "native": {
+            "vlan": 100
+          }
+        }
+      }
+    }
+  ]
+}
+
+
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/14",
+      "description": "AP2",
+      "switchport": {
+        "Cisco-IOS-XE-switch:mode": {
+          "trunk": {}
+        },
+        "Cisco-IOS-XE-switch:trunk": {
+          "allowed": {
+            "vlan": {
+              "vlans": "20,22"
+            }
+          },
+          "native": {
+            "vlan": 999
+          }
+        }
+      }
+    }
+  ]
+}
+
+
+
+9. Change interface description
+	PATCH @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
+      "description": "AP1-new-desc"
+    } ] }
+
+
+10. Change interface speed/duplex
+	PATCH @ https://10.85.134.119/restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet
+To set to 100 / half
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
+      "description": "AP1-new-desc",
+      "Cisco-IOS-XE-ethernet:speed": {
+        "value-100": [
+          null
+        ]
+      },
+      "Cisco-IOS-XE-ethernet:duplex": ”half"
+    }
+  ]
+}
+
+
+To set to 1000 / full
+{
+  "Cisco-IOS-XE-native:GigabitEthernet": [
+    {
+      "name": "1/0/1",
+      "description": "AP1-new-desc",
+      "Cisco-IOS-XE-ethernet:speed": {
+        "value-1000": [
+          null
+        ]
+      },
+      "Cisco-IOS-XE-ethernet:duplex": "full"
+    }
+  ]
+}
+
+
+11. Change interface settings for: mac-address ACL, arp inspection, dhcp source verify
+11A Verify-Modify MAC ACL
+	GET @ restconf/data/Cisco-IOS-XE-native:native/mac/Cisco-IOS-XE-acl:access-list/extended
+	DELETE @ restconf/data/Cisco-IOS-XE-native:native/mac/Cisco-IOS-XE-acl:access-list/extended="MAC-ACL-BLOCK-HSRP"
+	PATCH @ restconf/data/Cisco-IOS-XE-native:native/mac/Cisco-IOS-XE-acl:access-list
+
+{
+  "Cisco-IOS-XE-acl:access-list": {
+    "extended": [
+      {
+        "id": "MAC-ACL-BLOCK-HSRP",
+        "entry": [
+          {
+            "action": "deny",
+            "values": "0000.0c07.ac00 0000.0000.00ff any"
+          },
+          {
+            "action": "permit",
+            "values": "any any"
+          }
+        ]
+      }
+    ]
+  }
+}
+
+
+	GET @ restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/mac
+	PATCH @ restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/mac
+	DELETE @ restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/Cisco-IOS-XE-switch:mac/access-group=in
+	GET @ restconf/data/Cisco-IOS-XE-native:native/mac/Cisco-IOS-XE-acl:access-list
+
+{
+  "Cisco-IOS-XE-switch:mac": {
+    "access-group": [
+      {
+        "direction": "in",
+        "acl-name": "MAC-ACL-BLOCK-HSRP"
+      }
+    ]
+  }
+}
+
+
+
+11B. Verify/Modify DHCP Snooping
+	GET @ interface dhcp trust: restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/dhcp/snooping/trust
+	DELETE @ restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/dhcp/snooping/trust
+	PATCH @ restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/dhcp/Cisco-IOS-XE-dhcp:snooping/trust
+
+{
+  "trust": []
+}
+
+	GET @ restconf/data/Cisco-IOS-XE-native:native/ip/dhcp
+	DELETE @ restconf/data/Cisco-IOS-XE-native:native/ip/dhcp
+	PATCH @ restconf/data/Cisco-IOS-XE-native:native/ip/dhcp
+
+{
+  "Cisco-IOS-XE-native:dhcp": {
+    "Cisco-IOS-XE-dhcp:database": {
+      "resource": [
+        {
+          "resource-locator": "flash:dhcpdata.dat"
+        }
+      ]
+    },
+    "Cisco-IOS-XE-dhcp:snooping": [],
+    "Cisco-IOS-XE-dhcp:snooping-conf": {
+      "snooping": {
+        "information": {
+          "option": "false",
+          "options": {
+            "option": {
+              "allow-untrusted": []
+            }
+          }
+        },
+        "vlan": [
+          {
+            "id": 2
+          },
+          {
+            "id": 3
+          },
+	  ...
+	  ...
+	  ...
+	  ...
+---- REMAINED REMOVED ----
+
+
+11C. Verify/Modify ARP Inspection
+	GET @ restconf/data/Cisco-IOS-XE-native:native/ip/arp/inspection/vlan
+	PATCH @ restconf/data/Cisco-IOS-XE-native:native/ip/arp/inspection
+
+{
+  "Cisco-IOS-XE-native:inspection": {
+    "vlan": "2-200,202-247,251-254,256-299,301-400,403-429,431-901,904-909,914-1000"
+  }
+}
+
+	DELETE restconf/data/Cisco-IOS-XE-native:native/ip/arp/inspection/vlan
+	GET restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/arp/inspection/trust
+	DELETE restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/arp/inspection/trust
+	PATCH restconf/data/Cisco-IOS-XE-native:native/interface/GigabitEthernet=1%2F0%2F1/ip/arp/inspection/trust
+
+{
+  "trust": []
+}
+
+
+
+12: Save configuration
+	POST @ https://10.85.134.119/restconf/operations/cisco-ia:save-config/
 
 
 Example API Call:
